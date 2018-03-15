@@ -1,37 +1,36 @@
 FROM python:3.4
 
-MAINTAINER Hylke Visser <htdvisser@gmail.com>
+MAINTAINER Will Ye <yeah_well@live.com>
+
+EXPOSE 8000
+
+ARG TAIGA_BACK_VER
+ENV TAIGA_BACK_VER ${TAIGA_BACK_VER:-3.2.0}
 
 # Install dependencies
 RUN \
   apt-get update -qq && \
-  apt-get install -y netcat && \
-  rm -rf /var/lib/apt/lists/* && \
-  pip install gunicorn
+  apt-get install -y netcat gettext && \
+  rm -rf /var/lib/apt/lists/*
 
 # Install taiga-back
 RUN \
-  mkdir -p /usr/local/taiga && \
-  useradd -d /usr/local/taiga taiga && \
-  git clone https://github.com/taigaio/taiga-back.git /usr/local/taiga/taiga-back && \
-  mkdir /usr/local/taiga/media /usr/local/taiga/static /usr/local/taiga/logs && \
-  cd /usr/local/taiga/taiga-back && \
-  git checkout stable && \
-  pip install -r requirements.txt && \
-  touch /usr/local/taiga/taiga-back/settings/dockerenv.py
+  mkdir -p /taiga && \
+  useradd -d /taiga taiga && \
+  mkdir /taiga/media /taiga/static && \
+  git clone -b "${TAIGA_BACK_VER}" --single-branch --depth 1 https://github.com/taigaio/taiga-back.git /taiga/taiga-back && \
+  cd /taiga/taiga-back && \
+  pip install -r requirements.txt
 
 # Add Taiga Configuration
-ADD ./local.py /usr/local/taiga/taiga-back/settings/local.py
+ADD ./local.py /taiga/taiga-back/settings/local.py
 
 # Configure and Start scripts
-ADD ./configure /usr/local/taiga/configure
-ADD ./start /usr/local/taiga/start
-RUN chmod +x /usr/local/taiga/configure /usr/local/taiga/start
+ADD ./docker-entrypoint.sh /taiga/taiga-back/docker-entrypoint.sh
+RUN chmod +x /taiga/taiga-back/docker-entrypoint.sh
 
-VOLUME /usr/local/taiga/media
-VOLUME /usr/local/taiga/static
-VOLUME /usr/local/taiga/logs
+VOLUME /taiga/media
+VOLUME /taiga/static
 
-EXPOSE 8000
-
-CMD ["/usr/local/taiga/start"]
+WORKDIR /taiga/taiga-back
+CMD ["./docker-entrypoint.sh"]

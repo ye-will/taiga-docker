@@ -20,7 +20,7 @@ PUBLIC_REGISTER_ENABLED=${PUBLIC_REGISTER_ENABLED:-true}
 API=${API:-/api/v1/}
 DEBUG=${DEBUG:-false}
 
-cat > /usr/local/taiga/taiga-front-dist/dist/conf.json <<EOL
+cat > /taiga/taiga-front-dist/dist/conf.json <<EOL
 
 {
     "api": "${API}",

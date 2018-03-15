@@ -25,9 +25,9 @@ data:
   image: tianon/true
   volumes:
     - /var/lib/postgresql/data
-    - /usr/local/taiga/media
-    - /usr/local/taiga/static
-    - /usr/local/taiga/logs
+    - /taiga/media
+    - /taiga/static
+    - /taiga/logs
 db:
   image: postgres
   environment:
@@ -65,7 +65,7 @@ taigafront:
 To initialize the database, use ``docker exec -it taiga-back bash`` and execute the following commands:
 
 ```bash
-cd /usr/local/taiga/taiga-back/
+cd /taiga/taiga-back/
 python manage.py loaddata initial_user
 python manage.py loaddata initial_project_templates
 python manage.py loaddata initial_role

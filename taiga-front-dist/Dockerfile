@@ -17,16 +17,16 @@ RUN ln -sf /dev/stderr /var/log/nginx/error.log
 
 # Install taiga-front-dist
 RUN \
-  mkdir -p /usr/local/taiga && \
-  git clone https://github.com/taigaio/taiga-front-dist.git /usr/local/taiga/taiga-front-dist && \
-  cd /usr/local/taiga/taiga-front-dist && \
+  mkdir -p /taiga && \
+  git clone https://github.com/taigaio/taiga-front-dist.git /taiga/taiga-front-dist && \
+  cd /taiga/taiga-front-dist && \
   git checkout stable
 
 # Configuration and Start scripts
-ADD ./configure /usr/local/taiga/configure
-ADD ./start /usr/local/taiga/start
-RUN chmod +x /usr/local/taiga/configure /usr/local/taiga/start
+ADD ./configure /taiga/configure
+ADD ./start /taiga/start
+RUN chmod +x /taiga/configure /taiga/start
 
 EXPOSE 80 443
 
-CMD ["/usr/local/taiga/start"]
+CMD ["/taiga/start"]
