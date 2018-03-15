@@ -22,6 +22,9 @@ RUN \
   cd /taiga/taiga-back && \
   pip install -r requirements.txt
 
+ADD ./plugins.txt /taiga/taiga-back/plugins.txt
+RUN cd /taiga/taiga-back && pip install -r plugins.txt
+
 # Add Taiga Configuration
 ADD ./local.py /taiga/taiga-back/settings/local.py
 

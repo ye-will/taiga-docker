@@ -2,6 +2,11 @@ FROM nginx:1.7
 
 MAINTAINER Hylke Visser <htdvisser@gmail.com>
 
+ARG TAIGA_FRONT_VER
+ENV TAIGA_FRONT_VER ${TAIGA_FRONT_VER:-3.1.3-stable}
+ARG TAIGA_GITHUB_AUTH_VER
+ENV TAIGA_GITHUB_AUTH_VER ${TAIGA_GITHUB_AUTH_VER:-3.1}
+
 # Install Git
 RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
 
@@ -18,9 +23,11 @@ RUN ln -sf /dev/stderr /var/log/nginx/error.log
 # Install taiga-front-dist
 RUN \
   mkdir -p /taiga && \
-  git clone https://github.com/taigaio/taiga-front-dist.git /taiga/taiga-front-dist && \
-  cd /taiga/taiga-front-dist && \
-  git checkout stable
+  cd /taiga && \
+  git clone -b "${TAIGA_FRONT_VER}" --single-branch --depth 1 https://github.com/taigaio/taiga-front-dist.git && \
+  git clone -b "${TAIGA_GITHUB_AUTH_VER}" --single-branch --depth 1 https://github.com/taigaio/taiga-contrib-github-auth.git && \
+  mkdir -p /taiga/taiga-front-dist/dist/plugins && \
+  ln -s /taiga/taiga-contrib-github-auth/front/dist /taiga/taiga-front-dist/dist/plugins/github-auth
 
 # Configuration and Start scripts
 ADD ./configure /taiga/configure

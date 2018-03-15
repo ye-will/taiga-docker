@@ -44,3 +44,8 @@ DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'dev@example.com')
 DEBUG = os.getenv('DEBUG') == 'True'
 TEMPLATE_DEBUG = os.getenv('TEMPLATE_DEBUG') == 'True'
 PUBLIC_REGISTER_ENABLED = os.getenv('PUBLIC_REGISTER_ENABLED') != 'False'
+
+if os.environ.get("GITHUB_API_CLIENT_ID"):
+    INSTALLED_APPS += ["taiga_contrib_github_auth"]
+    GITHUB_API_CLIENT_ID = os.environ.get("GITHUB_API_CLIENT_ID")
+    GITHUB_API_CLIENT_SECRET = os.environ.get("GITHUB_API_CLIENT_SECRET")
