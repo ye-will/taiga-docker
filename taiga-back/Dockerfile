@@ -5,7 +5,7 @@ MAINTAINER Will Ye <yeah_well@live.com>
 EXPOSE 8000
 
 ARG TAIGA_BACK_VER
-ENV TAIGA_BACK_VER ${TAIGA_BACK_VER:-3.2.0}
+ENV TAIGA_BACK_VER ${TAIGA_BACK_VER:-3.2.2}
 
 # Install dependencies
 RUN \
