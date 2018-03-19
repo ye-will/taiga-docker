@@ -4,7 +4,6 @@ data:
     - /var/lib/postgresql/data
     - /taiga/media
     - /taiga/static
-    - /taiga/logs
 
 db:
   image: postgres
@@ -13,6 +12,15 @@ db:
     POSTGRES_PASSWORD: password
   volumes_from:
     - data
+  restart: always
+
+mq:
+  image: rabbitmq:alpine
+  hostname: taiga-rabbitmq
+  environment:
+    RABBITMQ_DEFAULT_VHOST: taiga
+    RABBITMQ_DEFAULT_USER: taiga
+    RABBITMQ_DEFAULT_PASS: taiga
   restart: always
 
 taigaback:
@@ -25,22 +33,40 @@ taigaback:
     DB_PASSWORD: password
     DOMAIN: 192.168.65.2:18000
     PUBLIC_REGISTER_ENABLED: 'False'
-    EMAIL_USE_TLS: 'False'
+    EMAIL_USE_TLS: 'True'
     EMAIL_HOST: my.smtp.server
     EMAIL_PORT: 587
     EMAIL_HOST_USER: user
     EMAIL_HOST_PASSWORD: password
     DEFAULT_FROM_EMAIL: no-reply@taiga.io
+    GITHUB_API_CLIENT_ID: yourgithubapiclientid
+    GITHUB_API_CLIENT_SECRET: yourgithubapiclientsecret
+    EVENT_AMQP_URL: amqp://taiga:taiga@taigamq:5672/taiga
+    SECRET_KEY: 1yMN6q9KiFHb9sF1
   links:
+    - mq:taigamq
     - db:postgres
   volumes_from:
     - data
   restart: always
   # entrypoint: sleep 1000000
 
+taigaevents:
+  build: taiga-events
+  environment:
+    EVENT_AMQP_URL: amqp://taiga:taiga@taigamq:5672/taiga
+    SECRET_KEY: 1yMN6q9KiFHb9sF1
+  links:
+    - mq:taigamq
+  restart: always
+
 taigafront:
   build: taiga-front-dist
+  environment:
+    PUBLIC_REGISTER_ENABLED: 'false'
+    GITHUB_CLIENT_ID: yourgithubapiclientid
   links:
+    - taigaevents
     - taigaback
   volumes_from:
     - data

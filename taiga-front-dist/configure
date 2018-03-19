@@ -18,6 +18,7 @@ mkdir -p /etc/nginx/ssl
 
 PUBLIC_REGISTER_ENABLED=${PUBLIC_REGISTER_ENABLED:-true}
 API=${API:-/api/v1/}
+EVENTS=${EVENTS:-/events}
 DEBUG=${DEBUG:-false}
 GITHUB_CLIENT_ID=${GITHUB_CLIENT_ID}
 
@@ -25,7 +26,7 @@ cat > /taiga/taiga-front-dist/dist/conf.json <<EOL
 
 {
     "api": "${API}",
-    "eventsUrl": null,
+    "eventsUrl": "${EVENTS}",
     "eventsMaxMissedHeartbeats": 5,
     "eventsHeartbeatIntervalTime": 60000,
     "debug": $DEBUG,

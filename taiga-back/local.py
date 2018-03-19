@@ -45,6 +45,11 @@ DEBUG = os.getenv('DEBUG') == 'True'
 TEMPLATE_DEBUG = os.getenv('TEMPLATE_DEBUG') == 'True'
 PUBLIC_REGISTER_ENABLED = os.getenv('PUBLIC_REGISTER_ENABLED') != 'False'
 
+if os.getenv('EVENT_AMQP_URL'):
+    SECRET_KEY = os.getenv('SECRET_KEY') or SECRET_KEY
+    EVENTS_PUSH_BACKEND = "taiga.events.backends.rabbitmq.EventsPushBackend"
+    EVENTS_PUSH_BACKEND_OPTIONS = {"url": os.getenv('EVENT_AMQP_URL')}
+
 if os.environ.get("GITHUB_API_CLIENT_ID"):
     INSTALLED_APPS += ["taiga_contrib_github_auth"]
     GITHUB_API_CLIENT_ID = os.environ.get("GITHUB_API_CLIENT_ID")
